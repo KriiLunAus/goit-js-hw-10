@@ -1,8 +1,9 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
 
 const startBtn = document.querySelector("button");
-const time = document.querySelector(".value");
 const days = document.getElementById("days");
 const hours = document.getElementById("hours");
 const minutes = document.getElementById("minutes");
@@ -12,6 +13,7 @@ const seconds = document.getElementById("seconds");
 let userDate;
 let timeInMs;
 let zero;
+let timerReload;
 
 flatpickr("#datetime-picker", {
     enableTime: true,
@@ -20,7 +22,6 @@ flatpickr("#datetime-picker", {
     minuteIncrement: 1,
     onClose: dateSelection,
 })
-
 
 function convertMs(ms) {
   const second = 1000;
@@ -39,28 +40,56 @@ function convertMs(ms) {
 function dateSelection(selectedDates) {
     if (selectedDates[0] <= new Date()) {
             startBtn.disabled = true;
-            return window.alert("Please choose a date in the future");
+
+      iziToast.warning({
+        message: 'Please choose a date in the future',
+        theme: 'dark',
+        position: 'topRight',
+        backgroundColor: 'red'
+      })
+            return 
         } else {
             startBtn.disabled = false;
             userDate = selectedDates[0];
     }
     
-    timeInMs = userDate - Date.now();  
     
-    zero = convertMs(timeInMs);
-    
-    
-    
-   
     console.log(userDate)
     
   }
 
+function addLeadingZero(value) {
+  
+    return value.toString().padStart(2, '0');
+    
+  }
+
+
 startBtn.addEventListener("click", () => {
-   days.textContent = zero.days;
-   hours.textContent = zero.hours;
-   minutes.textContent = zero.minutes;
-   seconds.textContent = zero.seconds;  
+  timerReload = setInterval(() => {
+    timeInMs = userDate - Date.now();  
+
+    if (timeInMs < 0) {
+      clearInterval(timerReload)
+      return
+    }
+
+    zero = convertMs(timeInMs);
+    
+
+    console.log(timeInMs)
+    days.textContent = addLeadingZero(zero.days);
+    hours.textContent = addLeadingZero(zero.hours);
+    minutes.textContent = addLeadingZero(zero.minutes);
+    seconds.textContent = addLeadingZero(zero.seconds);
+
+
+  }, 1000);
+
+  const input = document.getElementById('datetime-picker');
+  input.disabled = true;
+  startBtn.disabled = true;
+
 } )
 
 
