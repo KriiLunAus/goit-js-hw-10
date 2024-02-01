@@ -54,7 +54,7 @@ function dateSelection(selectedDates) {
     }
     
     
-    console.log(userDate)
+    
     
   }
 
