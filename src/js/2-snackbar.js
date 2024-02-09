@@ -14,22 +14,30 @@ function makePromise ( event ) {
 
     form.reset();
 
-    return new Promise(() => {
+    const snackbarPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
              if (state === `fulfilled`) {
-                 iziToast.success({
-                     message: `Fulfilled promise in ${delay}ms`,
-                     position: "topRight"
-                 }) 
+               resolve("message")
              } else {
-                 iziToast.error({
-                     message: `Rejected promise in ${delay}ms`,
-                     position: "topRight"
-                 })
+                 reject("error")
         }
         }, delay)
        
     })
 
-    
-}
+    snackbarPromise
+    .then(() => {
+        iziToast.success({
+            message: `Fulfilled promise in ${delay}ms`,
+            position: "topRight"
+        });
+})
+        .catch(() => {
+        iziToast.error({
+            message: `Rejected promise in ${delay}ms`,
+            position: "topRight"
+        })
+    })
+
+    return 
+    }
